@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: document-management
+  servlet:
+    multipart:
+      file-size-threshold: 2MB
+      max-file-size: 2MB
+      max-request-size: 2MB
+
+
+  datasource:
+    url: jdbc:h2:mem:document-management
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          postClient:
+                  url: https://jsonplaceholder.typicode.com/posts/
+
+logging:
+    level:
+     com.abcbank.documentmangement : DEBUG
+
+# spring.datasource.url=jdbc:h2:file:/data/demo8
