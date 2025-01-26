@@ -23,7 +23,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/documents")
-class DocumentController {
+public class DocumentController {
 
     private static final String PDF_CONTENT_TYPE = "application/pdf";
     private static final String UPLOAD_SUCCESS_MESSAGE = "Document Uploaded successfully";
