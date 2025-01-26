@@ -1,8 +1,16 @@
 package com.abcbank.documentmangement.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
+@Setter
+@Getter
 public class CustDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -10,12 +18,11 @@ public class CustDocument {
     private String name;
     @Lob
     private byte[] content;
+    private String userId;
+    private String postId;
+    private LocalDateTime createdDateTime;
+    private Long size;
+    private String contentType;
+    private String description;
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String title) { this.name = title; }
-    public byte[] getContent() { return content; }
-    public void setContent(byte[] content) { this.content = content; }
 }

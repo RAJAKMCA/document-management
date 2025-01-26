@@ -72,21 +72,15 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public PostResponse getAllDocuments(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {
+    public PostResponse getAllDocuments(Integer pageNo, Integer pageSize) {
 
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-
-        // create Pageable instance
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         Page<CustDocument> posts = documentRepository.findAll(pageable);
 
         // get content for page object
         List<CustDocument> listOfPosts = posts.getContent();
-
         List<CustDocumentDTO> content= listOfPosts.stream().map(post -> mapper.toDto(post)).collect(Collectors.toList());
-
         PostResponse postResponse = new PostResponse();
         postResponse.setContent(content);
         postResponse.setPageNo(posts.getNumber());

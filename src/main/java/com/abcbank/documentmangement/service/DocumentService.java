@@ -30,7 +30,7 @@ public interface DocumentService {
 
     public void updateDocument(Long id, CustDocumentDTO updatedDocument) ;
 
-    public PostResponse getAllDocuments(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
+    public PostResponse getAllDocuments(Integer pageNo, Integer pageSize);
 
 
 }

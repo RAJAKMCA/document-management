@@ -9,6 +9,7 @@ import com.abcbank.documentmangement.repository.DocumentRepository;
 import com.abcbank.documentmangement.service.DocumentService;
 import com.abcbank.documentmangement.utils.ApplicationConstants;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.ws.rs.Produces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,17 +24,20 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/documents")
 class DocumentController {
+
+    private static final String PDF_CONTENT_TYPE = "application/pdf";
+    private static final String UPLOAD_SUCCESS_MESSAGE = "Document Uploaded successfully";
     @Autowired
     private DocumentRepository documentRepository;
 
     @Autowired
     private DocumentService documentService;
 
-    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> createDocument(@RequestBody DocumentMetaData metaData, @RequestParam("file") MultipartFile document) throws IOException {
+    @PostMapping(path = "/upload",consumes = {"multipart/form-data"})
+    public ResponseEntity<String> createDocument(@RequestParam String userId,@RequestParam String postId , @RequestPart("file") MultipartFile document) throws IOException {
         String contentType = document.getContentType();
         // Validate the content type
-        if (!contentType.equals("application/pdf")) {
+        if (!PDF_CONTENT_TYPE.equals(contentType)) {
             throw new NotValidInputTypeException("Only PDF file will be allowed to upload");
         }
         CustDocumentDTO custDocumentDTO = new CustDocumentDTO();
@@ -42,11 +46,11 @@ class DocumentController {
         custDocumentDTO.setContent(document.getBytes());
         custDocumentDTO.setSize(document.getSize());
         custDocumentDTO.setContentType(document.getContentType());
-        custDocumentDTO.setPostId(metaData.getPostId());
-        custDocumentDTO.setUserId(metaData.getUserId());
+        custDocumentDTO.setPostId(postId);
+        custDocumentDTO.setUserId(userId);
         documentService.saveDocument(custDocumentDTO);
 
-        return new ResponseEntity<>("Document Uploaded successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(UPLOAD_SUCCESS_MESSAGE, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -55,10 +59,10 @@ class DocumentController {
         return new ResponseEntity<>(document, HttpStatus.OK);
     }
 
-    @GetMapping
+  /*  @GetMapping
     public ResponseEntity<List<CustDocumentDTO>> getAllDocuments() {
         return new ResponseEntity<>(documentService.getAllDocuments(), HttpStatus.OK);
-    }
+    }*/
 
     @PutMapping("/{id}/document")
     public ResponseEntity<CustDocumentDTO> updateDocument(@PathVariable Long id, @RequestBody DocumentMetaData updatedDocument) throws Exception {
@@ -80,10 +84,10 @@ class DocumentController {
     }
 
     @GetMapping
-    public PostResponse getAllDocumentsByPages(){
-         PostResponse postResponse = DocumentService.getAllDocuments(1, 2, "Id", "asc");
-
-         return postResponse;
+    public ResponseEntity<PostResponse> getAllDocuments(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "10") int size) {
+        PostResponse documentPage = documentService.getAllDocuments(page,size);
+        return new ResponseEntity<>(documentPage, HttpStatus.OK);
     }
 
 
